@@ -1,6 +1,6 @@
-## **What I Built**
+## **What I Applied**
 
-### **Security Principles Applied**
+### **Security Principles**
 #### Least Privilege
 - Only the minimum permissions required were granted to IAM users, roles, and services.
 - Root account usage was avoided for daily tasks.
