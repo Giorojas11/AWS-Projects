@@ -12,7 +12,7 @@ These projects demonstrate practical skills in:
 
 ## 📁 Project Index
 
-<a href="https://github.com/Giorojas11/AWS-Projects/tree/main/S3-Bucket-Terraform">➡️</a> ## **1. Secure S3 Bucket Deployment with Terraform**
+## **1. Secure S3 Bucket Deployment with Terraform** - <a href="https://github.com/Giorojas11/AWS-Projects/tree/main/S3-Bucket-Terraform"> Link </a>
 Deploying a S3 bucket with public access blocking, data retention, MFA-enforcement, CLI use, and Terraform automation.  
 
 ---
