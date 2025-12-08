@@ -633,7 +633,7 @@ resource "aws_iam_role_policy" "vpc_flow_logs_policy" {
             "logs:DescribeLogGroups",
             "logs:DescribeLogStreams"
       ]
-      Resource = "*"
+         Resource = "*"
     }]
   })
 }
@@ -659,7 +659,7 @@ resource "aws_flow_log" "vpc2_flow" {
 ### Testing
 When pinging from VPC to VPC, logs are created for the ICMP traffic.
 
-## 12. Lessons Learned & Next Steps
+## 11. Lessons Learned & Next Steps
 - VPCs require careful planning of CIDR blocks and routing
 - Security is layered: Security Groups, NACLs, and IAM policies
 - Jump hosts and proxy SSH can be replaced with SSM for production
