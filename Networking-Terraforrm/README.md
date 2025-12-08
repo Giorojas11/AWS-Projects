@@ -10,15 +10,15 @@
    - Private Subnet & NAT
 4. Routing
 5. Network Access Control Lists
-6. Security Groups
-7. EC2 Instances
+6. EC2 Instances
    - Public EC2
    - Private EC2
+7. Security Groups
 8. VPC Peering
-9. S3 Access and VPC Endpoints
+9. S3 Access & VPC Endpoints
 10. Monitoring with CloudWatch
 11. Terraform Project Structure
-12. Lessons Learned and Next Steps
+12. Lessons Learned & Next Steps
 
 ## 1. Project Overview
 This project sets up a secure, multi-tier AWS network environment:
@@ -286,8 +286,86 @@ resource "aws_network_acl_association" "private_acl_assoc" {
     network_acl_id  = aws_network_acl.private_acl.id
 }
 ```
-## 6. Security Groups
-I've added rules to my network to control traffic as needed but I can go a step further and manage traffic at the resource level using security groups. Security Groups similar to NACLs by creating inbound/outbound rules for resources. In this case, I will set up two security groups. One for my public EC2 instance in my public subnet and another for my private EC2 instance in my private subnet. 
+## 6. EC2 Instances
+Alright, my VPC has been set up and its subnets, secured. I will be using the free-tier AMI and instance type to avoid charges, Amazon Linux and T3.Micro. To start, I will test connectivity throughout my network by attempting to SSH from my local computer to my public EC2 and then my private EC2 by using key pairs for direct, secure access to my EC2s.
+
+The following code creates my EC2 with my specified AMI and instance type, subnet, and security group. It then creates a private key using RSA, pairs it with the server's public key, and adds them to a generated PEM file.
+
+Key Pairs: This is done through public key cryptography (asymmetric), a public key is stored on the server and used for encryption. It is paired with its counterpart, a private key, for decryption. This verification between a public and private key allows you to securely SSH into the EC2 instance. 
+
+### Public EC2
+-  Hosted in public subnet
+-  Security: HTTPS/SSH only
+-  Access via SSH key pair
+```
+resource "aws_instance" "AMI" {
+    ami                    = var.AMI
+    instance_type          = var.T3_Micro
+    subnet_id              = aws_subnet.public_subnet.id
+    vpc_security_group_ids = [aws_security_group.SG-public.id]
+    key_name = "admin-key"
+
+    tags = {
+        Name = "Public Server"
+    }
+}
+
+resource "tls_private_key" "pkey" {
+    algorithm = "RSA"
+    rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "admin-key" {
+    key_name   = "admin-key"
+    public_key = tls_private_key.pkey.public_key_openssh
+}
+
+resource "local_file" "private_key" {
+    content  = tls_private_key.pkey.private_key_pem
+    filename = "${path.module}/my-keypair.pem"
+}
+```
+#### Connectivity Test: 
+I used my newly created key pair to SSH from my local command prompt directly to my public EC2.
+
+### Private EC2
+- Hosted in private subnet
+- SSH restricted to public subnet
+- Jump from public EC2 using OpenSSH ProxyJump
+- Future improvement: SSM Session Manager to eliminate public SSH
+```
+resource "aws_instance" "AMI_3" {
+    ami                    = var.AMI
+    instance_type          = var.T3_Micro
+    subnet_id              = aws_subnet.private_subnet.id
+    vpc_security_group_ids = [aws_security_group.SG-private.id]
+    key_name = "private-key"
+
+    tags = {
+        Name = "Private Server"
+    }
+}
+
+resource "tls_private_key" "private_pkey" {
+    algorithm = "RSA"
+    rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "private-key" {
+    key_name   = "private-key"
+    public_key = tls_private_key.private_pkey.public_key_openssh
+}
+
+resource "local_file" "private_key_file" {
+    content         = tls_private_key.private_pkey.private_key_pem
+    filename        = "${path.module}/private-key.pem"
+}
+```
+#### Connectivity Test:
+Currently connected to my public EC2, I attempted to SSH using the private EC2's key pair. Using unique key pairs avoids compromise of both EC2s if the public EC2 were to become compromised. The connectivity test was unsuccessful. After some research I learned I could jump servers using OpenSSH. I added my private keys in ssh-agent and used ProxyJump to successfully SSH to my private EC2.
+
+## 7. Security Groups
+I've added rules to my network to control traffic as needed but I can go a step further and manage traffic at the resource level using security groups. Security Groups are similar to NACLs in that they create inbound/outbound rules for resources. In this case, I will set up two security groups. One for my public EC2 instance in my public subnet and another for my private EC2 instance in my private subnet. 
 
 This provides defense-in-depth and hardening by providing layers to my network security when used with NACLs.
 
@@ -363,5 +441,102 @@ resource "aws_security_group" "SG-private" {
     }
 }
 ```
+## 8. VPC Peering
+I have set up my VPC and its subnets, managed traffic using route tables, created EC2 servers in the public and private subnet and used NACLs and Security Groups to secure my network and resources. Now, I want to create another VPC. This VPC can be used for redundancy by putting it and its resources in a different availability zone or it can serve as a completely new network with its own infrastructure and resources. 
 
+I want VPC 2 to communicate with my Main VPC using VPC Peering. VPC Peering offers direct communication between VPCs, through the use of their private IP addresses. This is much more secure than sending traffic from a VPC, to the Internet, and then to the other VPC.
 
+- Main VPC: 10.0.0.0/16 (10.0.0.0 - 10.0.0.255.255)
+- VPC 2: 10.1.0.0/16 (10.1.0.0 - 10.1.255.255)
+```
+resource "aws_vpc" "vpc2" {
+    cidr_block = var.vpc2_cidr_block
+
+    enable_dns_support   = true
+    enable_dns_hostnames = true
+    
+    tags = {
+        Name = "VPC 2"
+    }
+}
+```
+VPC 2 Configuration:
+Public Subnet 2, Internet Gateway 2, and Route Table: 
+```
+#===========================================
+# 10.1.0.0/16 
+#===========================================
+
+resource "aws_subnet" "public_subnet_2" {
+    vpc_id                   = aws_vpc.vpc2.id
+    cidr_block               = "10.1.0.0/24"
+    map_public_ip_on_launch  = true
+    availability_zone        = "us-east-2a"
+
+    tags = {
+        Name = "Public Subnet 2"
+    }
+}
+
+resource "aws_internet_gateway" "IGW_2" {
+    vpc_id = aws_vpc.vpc2.id
+
+    tags = {
+        Name = "IGW 2"
+    }
+}
+
+resource "aws_route_table" "public_route_table_2" {
+    vpc_id = aws_vpc.vpc2.id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.IGW_2.id
+    }
+
+    route {
+        cidr_block                = var.vpc_cidr_block
+        vpc_peering_connection_id = aws_vpc_peering_connection.MAIN_to_VPC_2.id
+    }
+
+    tags = {
+        Name = "Public Route Table 2"
+    }
+}
+
+resource "aws_route_table_association" "public_rt_assoc_2" {
+    subnet_id      = aws_subnet.public_subnet_2.id
+    route_table_id = aws_route_table.public_route_table_2.id
+}
+```
+I also created a public EC2 that will be hosted in VPC 2's public subnet and I created a NACL for the subnet. Finally, I created another security group for VPC 2 - EC2.
+
+Now that I have two VPCs, Main VPC and VPC 2 I need to create the peering connection between them. I used `aws_vpc_peering_connection` to create this. The full code block:
+
+```
+resource "aws_vpc_peering_connection" "MAIN_to_VPC_2" {
+    
+    vpc_id        = aws_vpc.main_vpc.id
+    peer_vpc_id   = aws_vpc.vpc2.id
+    auto_accept   = true
+    
+    accepter {
+        allow_remote_vpc_dns_resolution = true
+  }
+
+    requester {
+        allow_remote_vpc_dns_resolution = true
+  }
+
+    tags = {
+        Name = "VPC Peering - Main VPC <> VPC 2"
+    }
+}
+```
+As mentioned before, I had previously set up the routing, NACLs, and Security Groups to allow traffic to and from VPCs using VPC Peering.
+
+### Connectivity Test:
+I used OpenSSH previously, but will be trying EC2 Instance Connect to connect to my Main VPC - Public EC2. To test VPC Peering works, I sent pings using ICMP from my first public server, Main VPC - Public EC2 to VPC 2 - EC2. 
+
+## 9. S3 Access & VPC Endpoints
+I would now like to securely access my S3 Bucket I made in "project" from my VPCs. Some AWS services don't live in VPCs and require going through the internet to access. VPC Endpoint allows you to establish a secure connection from Endpoint to your services without going through the internet.
