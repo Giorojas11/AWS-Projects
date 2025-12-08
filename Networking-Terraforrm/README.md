@@ -5,7 +5,7 @@
 ## Table of Contents
 1. [Project Overview](#1-project-overview)
 2. [VPC Creation](#2-vpc-creation)
-3. [Subnet](#3-subnet)
+3. [Subnets](#3-subnets)
    - [Public Subnet & Internet Gateway](#public-subnet--internet-gateway)
    - [Private Subnet & NAT](#private-subnet--nat)
 4. [Routing](#4-routing)
