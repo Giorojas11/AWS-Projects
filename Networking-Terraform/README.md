@@ -703,7 +703,7 @@ CloudWatch Flow Logs were enabled for the VPCs, capturing:
 - Rejected traffic
 - Traffic metadata
 
-A dedicated Log Group, IAM role and IAM policy were created for flow logs. 
+A dedicated Log Group, IAM role, and IAM policy were created for flow logs.
 
 ```
    # VPC CloudWatch Log Group
@@ -771,6 +771,8 @@ resource "aws_flow_log" "vpc2_flow" {
 
 ### Testing
 When pinging from VPC to VPC, logs are created for the ICMP traffic.
+
+
 <img width="1254" height="631" alt="CloudWatch_Ping_test" src="https://github.com/user-attachments/assets/4dfca927-b93e-4e6d-bd83-1f80c141a8c3" />
 
 <img width="1636" height="736" alt="ping_flow_logs" src="https://github.com/user-attachments/assets/b1d3cf5f-7bbf-4c91-bb4e-aaf93791a165" />
