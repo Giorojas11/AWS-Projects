@@ -67,7 +67,7 @@ The public subnet hosts resources that need direct internet access.
 - Public IP assignment: Enabled
 
 Key points:
-- The Internet Gateway required for inbound and outbound internet access.
+- The Internet Gateway enables inbound and outbound internet access.
 - The route table sends 0.0.0.0/0 traffic to the IGW.
 
 
