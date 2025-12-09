@@ -534,8 +534,11 @@ resource "aws_vpc" "vpc2" {
     }
 }
 ```
+
+
 VPC 2 Configuration:
-Public Subnet 2, Internet Gateway 2, and Route Table: 
+Subnetting, IGW, Routing, NACL, security group, and EC2 instance were created for VPC 2. Routing, NACLs, security groups for Main VPC were updated to allow communication between VPCs.
+
 
 ```
 #===========================================
@@ -589,9 +592,9 @@ resource "aws_route_table_association" "public_rt_assoc_2" {
 <img width="1650" height="321" alt="IGW2" src="https://github.com/user-attachments/assets/5b9a2c0f-8d7a-4552-a126-5f8cb77c274a" />
 <img width="1610" height="557" alt="Pub_EC2_2" src="https://github.com/user-attachments/assets/b603f7fc-5c24-4322-bef2-0631f04b116e" />
 
-Routing, NACL, security group, and EC2 instance were created for VPC 2. Routing, NACLs, security groups for Main VPC were updated to allow communication between VPCs.
 
 Creation of the VPC Peering connection between the Main VPC and VPC 2.
+
 
 ```
 resource "aws_vpc_peering_connection" "MAIN_to_VPC_2" {
