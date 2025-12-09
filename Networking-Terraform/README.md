@@ -97,7 +97,7 @@ resource "aws_internet_gateway" "IGW" {
 
 
 ### Private Subnet & NAT
-The private subnet host sensitive or backend resources that should not be directly exposed to the internet.
+The private subnet hosts sensitive or backend resources that should not be directly exposed to the internet.
 - CIDR: 10.0.1.0/24 (10.0.1.0 - 10.0.1.255)
 - Public IP assignment: Disabled
 
