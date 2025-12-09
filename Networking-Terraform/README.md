@@ -536,7 +536,6 @@ resource "aws_vpc" "vpc2" {
 ```
 
 
-VPC 2 Configuration:
 Subnetting, IGW, Routing, NACL, security group, and EC2 instance were created for VPC 2. Routing, NACLs, security groups for Main VPC were updated to allow communication between VPCs.
 
 
