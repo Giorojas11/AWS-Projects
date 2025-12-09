@@ -788,4 +788,5 @@ Next Steps:
 - Add additional subnets in different AZs for redundancy and isolated subnets for sensitive data
 - Implement VPC endpoints for other AWS services
 - Utilize other AWS services in my homelab like Lambda Functions and GuardDuty
-- Integrate CloudWatch alarms and dashboards for proactive monitoring of attacks - SSH Brute Force, anomalous network traffic, malicious source IPs, etc. 
+- Integrate CloudWatch alarms and dashboards for proactive monitoring of attacks - SSH Brute Force, anomalous network traffic, malicious source IPs, etc.
+  
