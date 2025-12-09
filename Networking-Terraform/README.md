@@ -140,7 +140,7 @@ resource "aws_nat_gateway" "NAT" {
 <img width="1636" height="205" alt="EIP" src="https://github.com/user-attachments/assets/a736f58f-c2b9-4ba3-a17c-c31808a1c277" />
 
 ## 4. Routing
-Route tables determine how traffic flows.
+Route tables determine how netowkr traffic flows.
 
 For my public subnet, the route table sends traffic outbound to the Internet gateway. I also added a route sending traffic to VPC 2, which will be used in VPC Peering.
 
