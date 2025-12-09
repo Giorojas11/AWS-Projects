@@ -518,7 +518,7 @@ resource "aws_security_group" "SG-private" {
 <img width="1610" height="485" alt="priv_SG" src="https://github.com/user-attachments/assets/d68c1ccc-d275-4851-a764-875139c50ce2" />
 
 ## 8. VPC Peering
-VPC Peering offers direct communication between VPCs, through the use of their private IP addresses. This is much more secure than sending traffic from a VPC, to the Internet, and then to the other VPC.
+VPC Peering offers direct communication between VPCs, through the use of their private IP addresses. This is much more secure than sending traffic from a VPC, to the Internet, and then to another VPC.
 
 - Main VPC: 10.0.0.0/16 (10.0.0.0 - 10.0.0.255.255)
 - VPC 2: 10.1.0.0/16 (10.1.0.0 - 10.1.255.255)
