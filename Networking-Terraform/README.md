@@ -142,7 +142,7 @@ resource "aws_nat_gateway" "NAT" {
 ## 4. Routing
 Route tables determine how network traffic flows.
 
-For my public subnet, the route table sends traffic outbound to the Internet gateway. I also added a route sending traffic to VPC 2, which will be used in VPC Peering.
+For the public subnet, the route table sends traffic outbound to the Internet gateway. and sends traffic to VPC 2, which will be used for the VPC Peering connection.
 
 
 ```
@@ -166,7 +166,7 @@ resource "aws_route_table" "route_table" {
 ```
 
 
-I associated this route table with my public subnet using route table association.
+The route table was tied to the public subnet using route table association.
 
 
 ```
@@ -175,7 +175,7 @@ resource "aws_route_table_association" "public_rt_assoc" {
     route_table_id = aws_route_table.route_table.id
 }
 ```
-This route table routes outbound traffic to the NAT gateway.
+This route table routes outbound traffic to the NAT gateway for outbound internet access from the private subnet.
 
 
 ```
