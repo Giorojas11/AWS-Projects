@@ -621,9 +621,9 @@ I used OpenSSH previously, so I will be trying EC2 Instance Connect to connect t
 <img width="945" height="660" alt="ping_EC2s_connected" src="https://github.com/user-attachments/assets/35dfc5ca-b0c5-45d1-a1e2-acc100945457" />
 
 ## 9. S3 Access & VPC Endpoints
-VPC Endpoint allows for secure access from VPC to [S3 Bucket](https://github.com/Giorojas11/AWS-Projects/tree/main/S3-Bucket-Terraform). Some AWS services aren't hosted in VPCs and require internet access, which can be a security risk. VPC Endpoint allows you to establish a secure connection from an Endpoint to your services without the internet.
+Some AWS services aren't hosted in VPCs and require internet access, which can be a security risk. VPC Endpoint allows you to establish a secure connection from an Endpoint to your services without the internet. A VPC endpoint will be used for secure access to the [S3 Bucket](https://github.com/Giorojas11/AWS-Projects/tree/main/S3-Bucket-Terraform).
 
-I created an endpoint for the Main VPC updated the routing for the public and private subnets.
+I created an endpoint for the Main VPC and updated the routing for the public and private subnets.
 
 ```
 resource "aws_vpc_endpoint" "s3_endpoint" {
