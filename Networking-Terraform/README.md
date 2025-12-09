@@ -426,7 +426,7 @@ resource "local_file" "private_key_file" {
 <img width="1644" height="663" alt="private_EC2" src="https://github.com/user-attachments/assets/cfad6240-1b8b-432d-a809-769c54adf042" />
 
 #### Connectivity Test:
-From the public EC2, I attempted to SSH using the private EC2's key pair. Unique key pairs prevents full compromise of both EC2s if the public EC2 were compromised. The connectivity test was unsuccessful. After some research I learned I could connect using OpenSSH. I added my private keys in ssh-agent and used ProxyJump to successfully SSH to my private EC2.
+From the public EC2, I attempted to SSH using the private EC2's key pair. Unique key pairs for each EC2 prevents full compromise of both EC2s if the public EC2 were compromised. The connectivity test was unsuccessful. After some research I learned I could connect using OpenSSH. I added my private keys in ssh-agent and used ProxyJump to successfully SSH to my private EC2.
 
 
 <img width="1062" height="343" alt="ssh_to_prvEC2_troubleshooting" src="https://github.com/user-attachments/assets/6b5fc5d5-548a-43d2-be20-384011a1584e" />
